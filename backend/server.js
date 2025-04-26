@@ -19,6 +19,11 @@ app.use(express.json())
 app.use(morgan("dev"))
 
 // Routes
+
+app.get("/",(req, res) => {
+  res.send("Welcome to the Payment Gateway API");
+})
+
 app.use("/api/auth", require("./routes/auth.routes"))
 app.use("/api/payments", require("./routes/payment.routes"))
 app.use("/api/transactions", require("./routes/transaction.routes"))
