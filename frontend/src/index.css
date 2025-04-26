@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.hover-effect-row {
+  transition: transform 0.3s ease, box-shadow 0.2s ease;
+}
+
+.hover-effect-row:hover {
+  transform: scale(1.01);
+  z-index: 15;
+  position: relative;
+  border-radius: 10px;
+}
+
+/* Light theme hover shadow */
+.light .hover-effect-row:hover {
+  box-shadow: 0 0 15px 10px rgba(17, 24, 39, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark theme hover shadow */
+.dark .hover-effect-row:hover {
+  box-shadow: 0 0 15px 10px rgba(0, 0, 0, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Theme base classes */
+.dark {
+  @apply bg-gray-900 text-white;
+}
+
+.light {
+  @apply bg-white text-gray-900;
+}
