@@ -230,9 +230,11 @@ const Dashboard = () => {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 rounded-md shadow-md overflow-hidden">
-        <div className="overflow-x-hidden overflow-y-hidden ">
-          <table className="min-w-full divide-gray-200 dark:divide-gray-700 ">
+      {/* Transactions Table */}
+
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <div className="md:overflow-x-hidden md:overflow-y-hidden overflow-auto">
+          <table className="md:min-w-full divide-gray-200 dark:divide-gray-700 ">
             <thead className="bg-gray-200 dark:bg-gray-700 rounded-xl">
               <tr className="">
                 <th

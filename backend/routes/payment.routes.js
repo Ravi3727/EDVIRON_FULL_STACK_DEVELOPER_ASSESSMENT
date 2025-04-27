@@ -15,5 +15,5 @@ router.post("/create-payment", authenticateToken, validateRequest(orderValidatio
 // Process webhook
 router.post("/webhook",authenticateToken, validateRequest(webhookValidationSchema), processWebhook)
 
-router.post("/check-status", checkPaymentStatus)
+router.post("/check-status", authenticateToken,checkPaymentStatus)
 module.exports = router

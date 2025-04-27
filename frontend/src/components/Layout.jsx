@@ -11,7 +11,7 @@ const Layout = () => {
   return (
     <div className={`min-h-screen ${darkMode ? "dark" : "light"}`}>
       <Navbar />
-      <div className="flex">
+      <div className="md:flex ">
         <Sidebar />
         <main className="flex-1 px-3 py-6">
           <Outlet />
