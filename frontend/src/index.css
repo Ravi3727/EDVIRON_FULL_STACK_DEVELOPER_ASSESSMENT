@@ -15,10 +15,10 @@ body {
 }
 
 .hover-effect-row:hover {
-  transform: scale(1.01);
+  transform: scale(1.02);
   z-index: 15;
   position: relative;
-  border-radius: 10px;
+  border-radius: 15px;
 }
 
 /* Light theme hover shadow */

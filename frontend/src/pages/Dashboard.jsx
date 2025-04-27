@@ -239,7 +239,7 @@ const Dashboard = () => {
               <tr className="">
                 <th
                   scope="col"
-                  className=" px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  className="rounded-l-lg px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                 >
                   Sr.No
                 </th>
@@ -303,7 +303,7 @@ const Dashboard = () => {
                 </th>
                 <th
                   scope="col"
-                  className="px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                  className="rounded-r-lg px-2 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort("payment_time")}
                 >
                   Payment Time
@@ -391,7 +391,7 @@ const Dashboard = () => {
           </table>
         </div>
 
-        <div className="px-6 py-4 flex items-center justify-between border-t bg-gray-200 dark:bg-gray-700 dark:border-gray-700">
+        <div className="px-6 py-4 flex items-center justify-between border-t bg-gray-200 dark:bg-gray-700 dark:border-gray-700 rounded-lg">
           <div className="flex items-center">
             <span className="text-sm text-gray-700 dark:text-gray-300">
               Showing page {pagination.page} of {pagination.pages || 1}
