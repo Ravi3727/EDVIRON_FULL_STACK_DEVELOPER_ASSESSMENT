@@ -5,11 +5,13 @@ import Navbar from "./Navbar"
 import Sidebar from "./Sidebar"
 import { useTheme } from "../contexts/ThemeContext"
 
+
 const Layout = () => {
   const { darkMode } = useTheme()
 
   return (
     <div className={`min-h-screen ${darkMode ? "dark" : "light"}`}>
+      
       <Navbar />
       <div className="md:flex ">
         <Sidebar />

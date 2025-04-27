@@ -11,8 +11,8 @@ const Sidebar = () => {
   const closeSidebar = () => setIsOpen(false);
 
   const links = [
-    { to: "/", icon: <FiHome size={18} />, text: "Create Payment" },
-    { to: "/dashboard", icon: <MdOutlineDashboard size={18} />, text: "Dashboard" },
+    { to: "/create-payment", icon: <FiHome size={18} />, text: "Create Payment" },
+    { to: "/", icon: <MdOutlineDashboard size={18} />, text: "Dashboard" },
     { to: "/transactions/school", icon: <GrTransaction size={18} />, text: "School Transactions" },
     { to: "/transaction-status", icon: <FiSearch size={18} />, text: "Check Status" },
   ];

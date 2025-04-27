@@ -142,7 +142,7 @@ const TransactionsBySchool = () => {
         {transactions.length > 0 && (
           <button
             onClick={exportToCSV}
-            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
             <FiDownload className="mr-2" /> Export
           </button>
@@ -279,10 +279,10 @@ const TransactionsBySchool = () => {
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             transaction.status === "success"
-                              ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
+                              ? " text-green-400"
                               : transaction.status === "pending"
-                                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
-                                : "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100"
+                                ? " text-yellow-400"
+                                : " text-red-400 "  
                           }`}
                         >
                           {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}

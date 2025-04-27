@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
-import { FiUser, FiLock, FiLogIn } from "react-icons/fi"
+import { FiUser, FiLock, FiLogIn, FiUserPlus } from "react-icons/fi"
 
 const Login = () => {
   const [username, setUsername] = useState("")
@@ -17,6 +17,18 @@ const Login = () => {
 
     setIsSubmitting(true)
     const success = await login(username, password)
+    setIsSubmitting(false)
+
+    if (success) {
+      navigate("/")
+    }
+  }
+
+  const handleGuestLogin = async () => {
+    setUsername("ravi")
+    setPassword("yash123")
+    setIsSubmitting(true)
+    const success = await login("ravi", "yash123")
     setIsSubmitting(false)
 
     if (success) {
@@ -78,19 +90,31 @@ const Login = () => {
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                "Signing in..."
-              ) : (
-                <>
-                  <FiLogIn className="mr-2" /> Sign in
-                </>
-              )}
-            </button>
+            {/* Buttons */}
+            <div className="flex space-x-4">
+              <button
+                type="submit"
+                className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  "Signing in..."
+                ) : (
+                  <>
+                    <FiLogIn className="mr-2" /> Sign in
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleGuestLogin}
+                className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                disabled={isSubmitting}
+              >
+                <FiUserPlus className="mr-2" /> Guest Login
+              </button>
+            </div>
           </form>
 
           <div className="mt-4 text-center">

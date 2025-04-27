@@ -5,11 +5,19 @@ import axios from "axios"
 import { FiFilter, FiChevronLeft, FiChevronRight, FiDownload } from "react-icons/fi"
 import { format } from "date-fns"
 import { FaRegCopy } from 'react-icons/fa';
+import TransactionAmountDisplayCard from "../components/TransactionAmountDisplayCard"
+import NumberOfTransactionCard from "../components/NumberOfTransactionCard"
+import NumberOfSchools from "../components/NumberOfSchools"
 
 const Dashboard = () => {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [todayTransactionAmount, setTodayTransactionAmount] = useState(0);
+  const [totalTransactionsAmount, setTotalTransactionsAmount] = useState(0);
+  const [totdayNumberOfTransactions, setTodayNumberOfTransactions] = useState(0);
+  const [totalNumberOfTransactions, setTotalNumberOfTransactions] = useState(0);
+  const [totalNumberOfSchools, setTotalNumberOfSchools] = useState(0);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -50,9 +58,11 @@ const Dashboard = () => {
         },
       })
 
+
       setTransactions(response.data.transactions)
+      // console.log(response.data.transactions)
       setPagination(response.data.pagination)
-      // console.log(response.data.transactions);
+
       setError(null)
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch transactions")
@@ -62,8 +72,55 @@ const Dashboard = () => {
     }
   }
 
+
+  const fetchSummary = async () => {
+    let url2 = `${import.meta.env.VITE_API_URL}/transactions?page=${0}&limit=${20}&sort=${sortField}&order=${sortOrder}`
+    try {
+      const response = await axios.get(url2, {
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      })
+      let totalAmount = 0;
+      let todayAmount = 0;
+      const today = new Date();
+      const schoolIdSet = new Set();
+      let todayTransactionCount = 0;
+
+      response.data.transactions.forEach(transaction => {
+        const amount = Number(transaction.transaction_amount) || 0;
+
+        totalAmount += amount;
+
+        const transactionDate = new Date(transaction.payment_time);
+
+        if (
+          transactionDate.getDate() === today.getDate() &&
+          transactionDate.getMonth() === today.getMonth() &&
+          transactionDate.getFullYear() === today.getFullYear()
+        ) {
+          todayAmount += amount;
+          todayTransactionCount++;
+        }
+
+        schoolIdSet.add(transaction.school_id);
+      });
+
+      setTotalTransactionsAmount(totalAmount);
+      setTodayTransactionAmount(todayAmount);
+      setTotalNumberOfTransactions(response.data.transactions.length);
+      setTotalNumberOfSchools(schoolIdSet.size);
+      setTodayNumberOfTransactions(todayTransactionCount);
+    } catch {
+      setError(err.response?.data?.message || "Failed to fetch transactions")
+      setTransactions([])
+    }
+  }
+
+
   useEffect(() => {
-    fetchTransactions()
+    fetchTransactions();
+    fetchSummary();
   }, [pagination.page, pagination.limit, sortField, sortOrder])
 
   const handleSort = (field) => {
@@ -82,7 +139,7 @@ const Dashboard = () => {
 
   const applyFilters = (e) => {
     e.preventDefault()
-    setPagination((prev) => ({ ...prev, page: 1 })) // Reset to first page
+    setPagination((prev) => ({ ...prev, page: 1 }))
     fetchTransactions()
   }
 
@@ -141,81 +198,77 @@ const Dashboard = () => {
 
   return (
     <div className="container mx-auto ">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Transactions Overview</h1>
         <div className="flex space-x-2">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="flex items-center px-4 py-2 bg-gray-400 dark:bg-gray-700 text-black dark:text-white rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             <FiFilter className="mr-2" /> Filters
           </button>
           <button
             onClick={exportToCSV}
-            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
             <FiDownload className="mr-2" /> Export
           </button>
         </div>
       </div>
 
+      {/* Filters */}
       {showFilters && (
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-md shadow-md mb-6">
-          <form onSubmit={applyFilters} className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-              <select
-                name="status"
-                value={filters.status}
-                onChange={handleFilterChange}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-white"
-              >
-                <option value="">All Statuses</option>
-                <option value="success">Success</option>
-                <option value="pending">Pending</option>
-                <option value="failed">Failed</option>
-              </select>
-            </div>
+        <div className="bg-gray-200 dark:bg-gray-800 p-4 rounded-md shadow-md mb-6 ">
+          <form onSubmit={applyFilters} className="flex flex-col justify-evenly gap-4">
+            <div className="min-w-full flex justify-evenly">
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">School ID</label>
-              <input
-                type="text"
-                name="schoolId"
-                value={filters.schoolId}
-                onChange={handleFilterChange}
-                placeholder="Enter School ID"
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-white"
-              />
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
-              <input
-                type="date"
-                name="startDate"
-                value={filters.startDate}
-                onChange={handleFilterChange}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-white"
-              />
-            </div>
+              <div className="w-1/5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                <select
+                  name="status"
+                  value={filters.status}
+                  onChange={handleFilterChange}
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-white"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="success">Success</option>
+                  <option value="pending">Pending</option>
+                  <option value="failed">Failed</option>
+                </select>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
-              <input
-                type="date"
-                name="endDate"
-                value={filters.endDate}
-                onChange={handleFilterChange}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-white"
-              />
-            </div>
 
+
+              <div className="w-1/5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={filters.startDate}
+                  onChange={handleFilterChange}
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-white"
+                />
+              </div>
+
+              <div className="w-1/5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">School ID</label>
+                <input
+                  type="text"
+                  name="schoolId"
+                  value={filters.schoolId}
+                  onChange={handleFilterChange}
+                  placeholder="Enter School ID"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
             <div className="md:col-span-4 flex justify-end space-x-2">
               <button
                 type="button"
                 onClick={resetFilters}
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                className="px-4 py-2 bg-gray-400 dark:bg-gray-700 text-black dark:text-white rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
               >
                 Reset
               </button>
@@ -229,6 +282,19 @@ const Dashboard = () => {
           </form>
         </div>
       )}
+
+      {/* Summary of data */}
+      <div className="w-full flex justify-evenly items-center px-4 py-6 ">
+        <div>
+          <TransactionAmountDisplayCard totalAmount={totalTransactionsAmount} todayAmount={todayTransactionAmount} />
+        </div>
+        <div>
+          <NumberOfTransactionCard totalTransactions={totalNumberOfTransactions} todayTransactions={totdayNumberOfTransactions} />
+        </div>
+        <div>
+          <NumberOfSchools totalSchools={totalNumberOfSchools} />
+        </div>
+      </div>
 
       {/* Transactions Table */}
 
@@ -341,16 +407,16 @@ const Dashboard = () => {
                       {transaction.collect_id}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                    {transaction.school_id}
+                      {transaction.school_id}
                       <FaRegCopy
                         onClick={() => handleCopy(transaction.school_id)}
-                        
+
                         className="cursor-pointer hover:text-green-500"
-                        
+
                       />
-                     
+
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 max-w-28">
                       {transaction.gateway}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -372,14 +438,14 @@ const Dashboard = () => {
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                    {transaction.custom_order_id}
-                    <FaRegCopy
+                      {transaction.custom_order_id}
+                      <FaRegCopy
                         onClick={() => handleCopy(transaction.custom_order_id)}
-                        
+
                         className="cursor-pointer hover:text-green-500"
-                        
+
                       />
-                      
+
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {format(new Date(transaction.payment_time), "MMM dd, yyyy HH:mm")}
@@ -433,6 +499,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
     </div>
   )
 }

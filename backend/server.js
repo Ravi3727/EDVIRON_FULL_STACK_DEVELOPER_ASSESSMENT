@@ -4,13 +4,11 @@ const dotenv = require("dotenv")
 const morgan = require("morgan")
 const connectDB = require("./config/db")
 
-// Load environment variables
 dotenv.config()
 
-// Connect to database
 connectDB()
 
-// Initialize express app
+
 const app = express()
 
 // Middleware
@@ -21,6 +19,8 @@ app.use(cors(
     credentials: true,
   }
 ))
+
+
 app.use(express.json())
 app.use(morgan("dev"))
 

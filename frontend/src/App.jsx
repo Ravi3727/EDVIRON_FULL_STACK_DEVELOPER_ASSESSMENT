@@ -10,6 +10,8 @@ import TransactionsBySchool from "./pages/TransactionsBySchool"
 import TransactionStatus from "./pages/TransactionStatus"
 import NotFound from "./pages/NotFound"
 import CreatePaymentRequest from "./pages/CreatePaymentRequest"
+import PageLoader from "./components/PageLoader"
+import { useState, useEffect } from "react"
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth()
@@ -26,26 +28,41 @@ const ProtectedRoute = ({ children }) => {
 }
 
 function App() {
+  const [showLoader, setShowLoader] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false)
+    }, 2500) // Show loader for 2.5 seconds
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (showLoader) {
+    return <PageLoader />
+  }
+
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<CreatePaymentRequest />} />
-        <Route path="transactions/school" element={<TransactionsBySchool />} />
-        <Route path="transaction-status" element={<TransactionStatus />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Route>
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="transactions/school" element={<TransactionsBySchool />} />
+          <Route path="transaction-status" element={<TransactionStatus />} />
+          <Route path="/create-payment" element={<CreatePaymentRequest />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
   )
 }
 

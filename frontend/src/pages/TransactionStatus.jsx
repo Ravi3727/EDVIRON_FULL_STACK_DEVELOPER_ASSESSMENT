@@ -131,12 +131,12 @@ const TransactionStatus = () => {
                   <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</h3>
                   <p className="mt-1">
                     <span
-                      className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      className={` py-1 inline-flex text-lg leading-5 font-semibold rounded-full ${
                         transaction.status === "success"
-                          ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
+                          ? " text-green-400"
                           : transaction.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
-                            : "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100"
+                            ? " text-yellow-400"
+                            : " text-red-400"
                       }`}
                     >
                       {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
