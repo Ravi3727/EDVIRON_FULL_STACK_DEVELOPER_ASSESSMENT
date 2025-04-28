@@ -284,16 +284,17 @@ const Dashboard = () => {
       )}
 
       {/* Summary of data */}
-      <div className="w-full flex justify-evenly items-center px-4 py-6 ">
+      <div className="w-full flex md:flex-row flex-wrap justify-evenly items-center px-4 py-6 ">
         <div>
           <TransactionAmountDisplayCard totalAmount={totalTransactionsAmount} todayAmount={todayTransactionAmount} />
         </div>
         <div>
-          <NumberOfTransactionCard totalTransactions={totalNumberOfTransactions} todayTransactions={totdayNumberOfTransactions} />
-        </div>
-        <div>
           <NumberOfSchools totalSchools={totalNumberOfSchools} />
         </div>
+        <div>
+          <NumberOfTransactionCard totalTransactions={totalNumberOfTransactions} todayTransactions={totdayNumberOfTransactions} />
+        </div>
+        
       </div>
 
       {/* Transactions Table */}

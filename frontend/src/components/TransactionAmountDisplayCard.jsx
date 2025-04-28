@@ -5,7 +5,7 @@ const TransactionAmountDisplayCard = ({totalAmount, todayAmount}) => {
     return (
         <>
             <div>
-                <div className="bg-gray-200 dark:bg-gray-800 shadow-lg rounded-lg p-4 mb-4 min-w-44 min-h-44 flex flex-col justify-evenly ">
+                <div className="bg-gray-200 dark:bg-gray-800 shadow-lg rounded-lg p-4 mb-4 md:min-w-44 md:min-h-44 min-w-28 min-h-28 flex flex-col justify-evenly ">
                     <div className='text-5xl w-16 h-16 rounded-full dark:bg-gray-400 bg-gray-400 p-2'>
                         <GiReceiveMoney />
                     </div>
