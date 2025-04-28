@@ -21,7 +21,7 @@ const PageLoader = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 1 }}
-                className="text-4xl md:text-6xl font-bold text-white mb-4 text-center"
+                className="text-4xl md:text-6xl font-bold dark:text-white text-gray-800 mb-4 text-center"
             >
                 Welcome to School Dashboard
             </motion.h1>
@@ -33,7 +33,7 @@ const PageLoader = () => {
                 transition={{ duration: 1.5 }}
             >
                 <motion.div
-                    className="w-5 h-5 bg-white rounded-full"
+                    className="w-5 h-5 dark:bg-white bg-gray-800 rounded-full"
                     animate={{
                         y: [0, -20, 0],
                     }}
@@ -45,7 +45,7 @@ const PageLoader = () => {
                     }}
                 />
                 <motion.div
-                    className="w-5 h-5 bg-white rounded-full"
+                    className="w-5 h-5 dark:bg-white bg-gray-800 rounded-full"
                     animate={{
                         y: [0, -20, 0],
                     }}
@@ -57,7 +57,7 @@ const PageLoader = () => {
                     }}
                 />
                 <motion.div
-                    className="w-5 h-5 bg-white rounded-full"
+                    className="w-5 h-5 dark:bg-white bg-gray-800 rounded-full"
                     animate={{
                         y: [0, -20, 0],
                     }}
