@@ -134,8 +134,9 @@ const processWebhook = async (req, res, next) => {
       await webhookLog.save();
 
       console.log("Webhook log saved successfully");
-      res.json({ message: "Webhook processed successfully" })
       res.redirect(`${process.env.CLIENT_URL}/payment-success?status=${status}`);
+      res.json({ message: "Webhook processed successfully" })
+      
      
     } else {
       res.redirect(`${process.env.CLIENT_URL}/payment-success?status=${status}`);
