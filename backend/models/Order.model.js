@@ -18,10 +18,17 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  edviron_collect_id: {
+    type: String,
+    required: true,
+  },
   custom_order_id: {
     type: String,
     required: true,
-    unique: true,
   },
   createdAt: {
     type: Date,
@@ -31,6 +38,5 @@ const orderSchema = new mongoose.Schema({
 
 // Add indexes for frequently queried fields
 orderSchema.index({ school_id: 1 })
-orderSchema.index({ custom_order_id: 1 }, { unique: true })
 
 module.exports = mongoose.model("Order", orderSchema)

@@ -3,35 +3,13 @@ const axios = require("axios")
 const Order = require("../models/Order.model")
 const OrderStatus = require("../models/OrderStatus.model")
 const WebhookLog = require("../models/WebhookLog.model")
-
+const User = require("../models/User.model")
 // Create a new payment
 const createPayment = async (req, res, next) => {
   try {
-    const { school_id, trustee_id, student_info, gateway_name, amount } = req.body
+    const { school_id, amount } = req.body
 
     // Generate a unique custom order ID
-    const custom_order_id = `ORDER_${Date.now()}_${Math.floor(Math.random() * 1000)}`
-
-    // Create new order
-    const order = new Order({
-      school_id,
-      trustee_id,
-      student_info,
-      gateway_name,
-      custom_order_id,
-    })
-
-    await order.save()
-    
-    // Create initial order status
-    const orderStatus = new OrderStatus({
-      collect_id: order._id,
-      order_amount: amount,
-      transaction_amount: amount,
-      status: "pending",
-    })
-
-    await orderStatus.save()
 
     const signPayload = {
       school_id: school_id.toString(),
@@ -48,7 +26,7 @@ const createPayment = async (req, res, next) => {
         school_id: school_id.toString(),
         amount: amount.toString(),
         callback_url: process.env.CALLBACK_URL.toString() || "https://your-app.com/payment-callback",
-        sign:sign.toString(),
+        sign: sign.toString(),
       },
       {
         headers: {
@@ -71,30 +49,55 @@ const createPayment = async (req, res, next) => {
       },
     }
 
-    const simulatedWebhookData = {
-      status: 200,
-      order_info: {
-        order_id: custom_order_id,
-        order_amount: amount,
-        transaction_amount: amount,
-        gateway: gateway_name,
-        status: "SUCCESS",
-        bank_reference: "YESBNK222",
-        payment_mode: "UPI",
-        payemnt_details: "success@ybl",
-        Payment_message: "payment success",
-        payment_time: new Date().toISOString(),
-        error_message: "NA",
-      },
-    }
-    await processWebhook(
-      { body: simulatedWebhookData },
-      { json: (data) => console.log("Webhook simulated:", data), status: () => ({ json: console.log }) },
-      (err) => console.error("Webhook error:", err)
-    )
+    const trustee_id = process.env.TRUSTEE_ID || "1234567890";
+    const gateway_name = process.env.GATEWAY_NAME || "PhonePe";
+    // console.log("user id ", req.user.id);
+    const student_info = await User.findOne({ _id: req.user.id });
+    // console.log(" Stu info ", student_info);
 
-    res.json(responsePayload)
+    const custom_order_id =  Math.floor(1000000000 + Math.random() * 9000000000).toString();
+ 
+    const order = new Order({
+      school_id,
+      trustee_id,
+      student_info: {
+        name: student_info.username,
+        id: student_info._id.toString(),
+        email: student_info.email,
+      },
+      gateway_name,
+      amount,
+      edviron_collect_id: collect_request_id,
+      custom_order_id: custom_order_id
+    });
+
+    await order.save();
+
+    const orderDetails = await Order.findOne({ edviron_collect_id: collect_request_id });
+    // console.log("Order id ", orderDetails);
+
+    const orderStatus = new OrderStatus({
+      order_id: orderDetails.id,
+      order_amount: amount,
+      transaction_amount: amount,
+      status: "pending",
+      gateway: gateway_name,
+      payment_mode: "upi",
+      payment_details: "success@ybl",
+      bank_reference: "YESBNK222",
+      payment_message: "payment success",
+      status: "success",
+      error_message: "NA",
+      payment_time: new Date(),
+      edviron_collect_id: collect_request_id,
+    })
+
+    await orderStatus.save()
+    // console.log(" colect req id ", collect_request_id);
+    console.log("Order created successfully", order);
+    res.json(responsePayload);
   } catch (error) {
+    console.error("Error creating payment:", error)
     next(error)
   }
 }
@@ -102,54 +105,42 @@ const createPayment = async (req, res, next) => {
 // Process webhook
 const processWebhook = async (req, res, next) => {
   try {
-    const webhookData = req.body
+    const { status, EdvironCollectRequestId } = req.query;
 
-    // Log the webhook payload
-    const webhookLog = new WebhookLog({
-      payload: webhookData,
-      processed: false,
-    })
+    if (status === "SUCCESS") {
+      // console.log("EdvironCollectRequestId  ", EdvironCollectRequestId);
 
-    await webhookLog.save()
+      // Update order status
+      await OrderStatus.findOneAndUpdate(
+        { edviron_collect_id: EdvironCollectRequestId },
+        { status: "success" },
+        { new: true }
+      )
 
-    // Extract order info
-    const { order_info } = webhookData
 
-    if (!order_info || !order_info.order_id) {
-      webhookLog.error = "Invalid webhook payload"
-      await webhookLog.save()
-      return res.status(400).json({ message: "Invalid webhook payload" })
+      // Check if the order exists in the database
+      const orderDetails = await Order.findOne({ edviron_collect_id: EdvironCollectRequestId });
+      // console.log("Order id ", orderDetails);
+
+      if (!orderDetails) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      const webhookLog = new WebhookLog({
+        collect_request_id: EdvironCollectRequestId,
+        status: status,
+        order_id: orderDetails._id,
+      })
+
+      await webhookLog.save();
+
+      console.log("Webhook log saved successfully");
+      res.json({ message: "Webhook processed successfully" })
+      res.redirect(`${process.env.CLIENT_URL}/payment-success?status=${status}`);
+     
+    } else {
+      res.redirect(`${process.env.CLIENT_URL}/payment-success?status=${status}`);
+      res.json({ message: "Webhook processed successfully" })
     }
-
-    const order = await Order.findOne({ custom_order_id: order_info.order_id });
-
-    if (!order) {
-      webhookLog.error = "Order not found"
-      await webhookLog.save()
-      return res.status(404).json({ message: "Order not found" })
-    }
-
-    // Update order status
-    await OrderStatus.findOneAndUpdate(
-      { collect_id: order._id },
-      {
-        order_amount: order_info.order_amount,
-        transaction_amount: order_info.transaction_amount,
-        payment_mode: order_info.payment_mode,
-        payment_details: order_info.payemnt_details,
-        bank_reference: order_info.bank_reference,
-        payment_message: order_info.Payment_message,
-        status: order_info.status.toLowerCase(),
-        error_message: order_info.error_message,
-        payment_time: order_info.payment_time || new Date(),
-      },
-    )
-
-    // Mark webhook as processed
-    webhookLog.processed = true
-    await webhookLog.save()
-
-    res.json({ message: "Webhook processed successfully" })
   } catch (error) {
     next(error)
   }
@@ -175,7 +166,7 @@ const checkPaymentStatus = async (req, res, next) => {
         }
       }
     );
-    console.log(statusResponse)
+    // console.log(statusResponse)
     res.status(200).json({
       status: statusResponse.data.status,
       message: "Payment status retrieved successfully",

@@ -3,7 +3,6 @@ const { createPayment, processWebhook, checkPaymentStatus } = require("../contro
 const {
   validateRequest,
   orderValidationSchema,
-  webhookValidationSchema,
 } = require("../middleware/validation.middleware")
 const { authenticateToken } = require("../middleware/auth.middleware")
 
@@ -13,7 +12,7 @@ const router = express.Router()
 router.post("/create-payment", authenticateToken, validateRequest(orderValidationSchema), createPayment)
 
 // Process webhook
-router.post("/webhook",authenticateToken, validateRequest(webhookValidationSchema), processWebhook)
+router.get("/webhook", processWebhook)
 
 router.post("/check-status", authenticateToken,checkPaymentStatus)
 module.exports = router

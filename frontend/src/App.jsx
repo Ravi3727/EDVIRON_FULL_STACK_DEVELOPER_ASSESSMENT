@@ -12,6 +12,8 @@ import NotFound from "./pages/NotFound"
 import CreatePaymentRequest from "./pages/CreatePaymentRequest"
 import PageLoader from "./components/PageLoader"
 import { useState, useEffect } from "react"
+import PaymentSuccess from "./pages/PaymentSuccess"
+
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth()
@@ -59,6 +61,7 @@ function App() {
           <Route path="transactions/school" element={<TransactionsBySchool />} />
           <Route path="transaction-status" element={<TransactionStatus />} />
           <Route path="/create-payment" element={<CreatePaymentRequest />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

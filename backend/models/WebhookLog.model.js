@@ -1,21 +1,20 @@
 const mongoose = require("mongoose")
 
 const webhookLogSchema = new mongoose.Schema({
-  payload: {
-    type: Object,
+  collect_request_id: {
+    type: String,
     required: true,
   },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
-  processed: {
-    type: Boolean,
-    default: false,
-  },
-  error: {
+  status: {
     type: String,
+    enum: ["PENDING", "SUCCESS", "FAILED"],
+    default: "PENDING",
   },
+  order_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Order",
+    required: true,
+  }
 })
 
 module.exports = mongoose.model("WebhookLog", webhookLogSchema)

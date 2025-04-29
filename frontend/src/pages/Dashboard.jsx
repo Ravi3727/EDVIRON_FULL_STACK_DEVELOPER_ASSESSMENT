@@ -60,7 +60,7 @@ const Dashboard = () => {
 
 
       setTransactions(response.data.transactions)
-      // console.log(response.data.transactions)
+      console.log(response.data.transactions)
       setPagination(response.data.pagination)
 
       setError(null)

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 
 const orderStatusSchema = new mongoose.Schema({
-  collect_id: {
+  order_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Order",
     required: true,
@@ -14,16 +14,10 @@ const orderStatusSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  payment_mode: {
-    type: String,
-  },
-  payment_details: {
+  gateway:{
     type: String,
   },
   bank_reference: {
-    type: String,
-  },
-  payment_message: {
     type: String,
   },
   status: {
@@ -31,17 +25,30 @@ const orderStatusSchema = new mongoose.Schema({
     enum: ["pending", "success", "failed"],
     default: "pending",
   },
-  error_message: {
+  payment_mode: {
+    type: String,
+  },
+  payment_details: {
+    type: String,
+  },
+  payment_message: {
     type: String,
   },
   payment_time: {
     type: Date,
     default: Date.now,
   },
+  edviron_collect_id: {
+    type: String,
+    required: true,
+  },
+  error_message: {
+    type: String,
+  },
 })
 
 // Add indexes for frequently queried fields
-orderStatusSchema.index({ collect_id: 1 })
+orderStatusSchema.index({ order_id: 1 })
 orderStatusSchema.index({ status: 1 })
 orderStatusSchema.index({ payment_time: -1 })
 

@@ -11,33 +11,9 @@ const userValidationSchema = z.object({
 // Order validation schema
 const orderValidationSchema = z.object({
   school_id: z.string(),
-  trustee_id: z.string(),
-  student_info: z.object({
-    name: z.string(),
-    id: z.string(),
-    email: z.string().email(),
-  }),
-  gateway_name: z.string(),
   amount: z.number().positive(),
 })
 
-// Webhook validation schema
-const webhookValidationSchema = z.object({
-  status: z.number(),
-  order_info: z.object({
-    order_id: z.string(),
-    order_amount: z.number(),
-    transaction_amount: z.number(),
-    gateway: z.string(),
-    bank_reference: z.string().optional(),
-    status: z.string(),
-    payment_mode: z.string().optional(),
-    payemnt_details: z.string().optional(),
-    Payment_message: z.string().optional(),
-    payment_time: z.string().optional(),
-    error_message: z.string().optional(),
-  }),
-})
 
 // Validation middleware
 const validateRequest =
@@ -67,6 +43,5 @@ const validateRequest =
 module.exports = {
   userValidationSchema,
   orderValidationSchema,
-  webhookValidationSchema,
   validateRequest,
 }
