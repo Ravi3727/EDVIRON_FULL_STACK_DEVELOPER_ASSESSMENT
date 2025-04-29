@@ -55,6 +55,7 @@ backend/
 
 ## Features  
 
+#### Postman Api Collection -> https://.postman.co/workspace/My-Workspace~8f94530d-4728-40e1-8da4-7b7e132212c2/collection/27206076-54c5e43d-c176-47e9-8642-52caac0ecd06?action=share&creator=27206076 
 #### Frontend -> https://github.com/Ravi3727/EDVIRON_FULL_STACK_DEVELOPER_ASSESSMENT/tree/main/frontend 
 #### Backend -> https://github.com/Ravi3727/EDVIRON_FULL_STACK_DEVELOPER_ASSESSMENT/tree/main/backend 
 
